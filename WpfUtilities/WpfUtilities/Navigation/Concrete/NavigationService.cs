@@ -11,15 +11,11 @@ namespace WpfUtilities.Navigation.Concrete
     /// </summary>
     public sealed class NavigationService : INavigationService
     {
+#pragma warning disable CS8618
         [Dependency]
         public IUnityContainer Container { get; set; }
+#pragma warning restore
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="U"></typeparam>
-        /// <returns></returns>
         public T Show<T, U>() where T : Window where U : INotifyPropertyChanged
         {
             var window = Container.Resolve<T>();
@@ -29,11 +25,17 @@ namespace WpfUtilities.Navigation.Concrete
             return window;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public T Show<T>() where T : Window
         {
             var window = Container.Resolve<T>();
 
-            string? @namespace = typeof( T ).Namespace?.Replace( ".View", ".ViewModel" );
+            var @namespace = typeof( T ).Namespace?.Replace( ".View", ".ViewModel" );
             var viewModelName = window.GetType().Name.Replace( "Window", "" ) + "ViewModel";
             var viewModelType = Type.GetType( string.Format( "{0}.{1}", @namespace, viewModelName ) );
 
